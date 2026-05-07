@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生选课管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #4CAF50;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        h2 {
+            color: #3498db;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+
+        .btn-secondary {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .message {
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .search-type {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background-color: white;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-bottom: none;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            background-color: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-top: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #333;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            opacity: 0.9;
+        }
+
+        .stat-card .count {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .example {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            color: #0066cc;
+        }
+
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #004085;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .loading::after {
+            content: "加载中...";
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📚 学生选课管理系统</h1>
+        <p class="subtitle">SpringBoot 3.x 实现 | 批量导入 | 智能分类 | 快速检索</p>
+    </header>
+
+    <!-- 统计信息 -->
+    <div class="section">
+        <h2>📊 数据概览</h2>
+        <div class="statistics" id="statistics">
+            <!-- 统计信息将通过JavaScript动态加载 -->
+        </div>
+    </div>
+
+    <!-- 数据导入区 -->
+    <div class="section">
+        <h2>📥 批量导入选课数据</h2>
+        <div class="form-group">
+            <label for="csvData">请输入CSV格式的选课数据（每行一条记录）：</label>
+            <textarea id="csvData" placeholder="格式示例：
+S000001,C000001,Java程序设计,专业课
+S000002,C000003,大学英语,公共课
+S000003,C000004,数据结构,专业课
+S000001,C000005,音乐欣赏,选修课"></textarea>
+        </div>
+
+        <div class="example">
+            <div class="example-title">📋 CSV格式说明：</div>
+            学号,课程号,课程名称,课程类型<br>
+            • 课程类型可填：公共课、专业课、选修课<br>
+            • 如不指定课程类型，系统将自动识别<br>
+            • 支持单次导入≥500条记录
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="importData()">导入数据</button>
+            <button class="btn-secondary" onclick="initSampleData()">初始化示例数据</button>
+            <button class="btn-danger" onclick="clearAllData()">清空所有数据</button>
+        </div>
+
+        <div id="importMessage" class="message"></div>
+    </div>
+
+    <!-- 搜索区 -->
+    <div class="section">
+        <h2>🔍 选课记录检索</h2>
+        <div class="search-box">
+            <input type="text" id="searchKeyword" class="search-input" placeholder="请输入搜索关键词...">
+            <select id="searchType" class="search-type">
+                <option value="studentId">按学生ID</option>
+                <option value="courseId">按课程ID</option>
+                <option value="courseName">按课程名称</option>
+                <option value="courseType">按课程类型</option>
+            </select>
+            <button class="btn-info" onclick="searchCourses()">搜索</button>
+            <button class="btn-secondary" onclick="resetSearch()">重置</button>
+        </div>
+        <div id="searchMessage" class="message"></div>
+    </div>
+
+    <!-- 数据展示区 -->
+    <div class="section">
+        <h2>📋 选课记录列表</h2>
+        <div id="loading" class="loading"></div>
+
+        <div class="tab-container">
+            <div class="tabs" id="courseTypeTabs">
+                <!-- 选项卡将通过JavaScript动态生成 -->
+            </div>
+            <div class="tab-content active" id="allCoursesTab">
+                <table id="allCoursesTable">
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>学号</th>
+                        <th>课程号</th>
+                        <th>课程名称</th>
+                        <th>课程类型</th>
+                        <th>创建时间</th>
+                    </tr>
+                    </thead>
+                    <tbody id="allCoursesBody">
+                    <!-- 数据将通过JavaScript动态加载 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="noDataMessage" style="text-align: center; padding: 40px; color: #666; display: none;">
+            <p>暂无选课记录，请先导入数据或初始化示例数据。</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        loadAllCourses();
+    });
+
+    // 加载所有选课记录
+    function loadAllCourses() {
+        showLoading(true);
+
+        fetch('/courses/all')
+            .then(response => response.json())
+            .then(data => {
+                updateStatistics(data.stats, data.totalCount);
+                updateCourseTabs(data.groupedCourses);
+                renderCoursesTable(data.groupedCourses);
+                showLoading(false);
+
+                // 显示/隐藏无数据消息
+                document.getElementById('noDataMessage').style.display =
+                    data.totalCount === 0 ? 'block' : 'none';
+            })
+            .catch(error => {
+                console.error('加载数据失败:', error);
+                showMessage('error', '加载数据失败: ' + error.message, 'importMessage');
+                showLoading(false);
+            });
+    }
+
+    // 更新统计信息
+    function updateStatistics(stats, totalCount) {
+        const statsContainer = document.getElementById('statistics');
+        let html = '';
+
+        // 总记录数卡片
+        html += `
+                <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3>总记录数</h3>
+                    <div class="count">${totalCount}</div>
+                </div>
+            `;
+
+        // 各类型统计卡片
+        const colors = [
+            'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+            'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
+        ];
+
+        let colorIndex = 0;
+        for (const [type, count] of Object.entries(stats)) {
+            html += `
+                    <div class="stat-card" style="background: ${colors[colorIndex % colors.length]}">
+                        <h3>${type}</h3>
+                        <div class="count">${count}</div>
+                    </div>
+                `;
+            colorIndex++;
+        }
+
+        statsContainer.innerHTML = html;
+    }
+
+    // 更新课程类型选项卡
+    function updateCourseTabs(groupedCourses) {
+        const tabsContainer = document.getElementById('courseTypeTabs');
+        let html = '';
+
+        // 所有课程选项卡
+        html += `<div class="tab active" onclick="switchTab('all')">全部课程</div>`;
+
+        // 各类型课程选项卡
+        for (const type in groupedCourses) {
+            const count = groupedCourses[type].length;
+            html += `
+                    <div class="tab" onclick="switchTab('${type}')">
+                        ${type} (${count})
+                    </div>
+                `;
+        }
+
+        tabsContainer.innerHTML = html;
+    }
+
+    // 切换选项卡
+    function switchTab(type) {
+        // 更新选项卡状态
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            if (tab.textContent.includes(type) || (type === 'all' && tab.textContent.includes('全部课程'))) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+
+        // 加载对应类型的数据
+        if (type === 'all') {
+            loadAllCourses();
+        } else {
+            searchByType(type);
+        }
+    }
+
+    // 按类型搜索
+    function searchByType(courseType) {
+        showLoading(true);
+
+        fetch(`/courses/search?searchType=courseType&keyword=${encodeURIComponent(courseType)}`)
+            .then(response => response.json())
+            .then(data => {
+                renderCoursesTable({[courseType]: data.records});
+                showLoading(false);
+            })
+            .catch(error => {
+                console.error('搜索失败:', error);
+                showLoading(false);
+            });
+    }
+
+    // 渲染课程表格
+    function renderCoursesTable(groupedCourses) {
+        const tbody = document.getElementById('allCoursesBody');
+        let html = '';
+        let index = 1;
+
+        for (const [type, courses] of Object.entries(groupedCourses)) {
+            for (const course of courses) {
+                html += `
+                        <tr>
+                            <td>${index++}</td>
+                            <td>${course.studentId}</td>
+                            <td>${course.courseId}</td>
+                            <td>${course.courseName}</td>
+                            <td>
+                                <span style="
+                                    display: inline-block;
+                                    padding: 3px 8px;
+                                    border-radius: 12px;
+                                    font-size: 12px;
+                                    ${getCourseTypeStyle(course.courseType)}
+                                ">
+                                    ${course.courseType}
+                                </span>
+                            </td>
+                            <td>${formatDateTime(course.createTime)}</td>
+                        </tr>
+                    `;
+            }
+        }
+
+        tbody.innerHTML = html;
+    }
+
+    // 获取课程类型样式
+    function getCourseTypeStyle(type) {
+        const styles = {
+            '公共课': 'background-color: #e3f2fd; color: #1565c0;',
+            '专业课': 'background-color: #e8f5e8; color: #2e7d32;',
+            '选修课': 'background-color: #f3e5f5; color: #7b1fa2;'
+        };
+        return styles[type] || 'background-color: #f5f5f5; color: #666;';
+    }
+
+    // 格式化日期时间
+    function formatDateTime(dateTimeStr) {
+        if (!dateTimeStr) return '';
+        const date = new Date(dateTimeStr);
+        return date.toLocaleString('zh-CN');
+    }
+
+    // 导入数据
+    function importData() {
+        const csvData = document.getElementById('csvData').value.trim();
+
+        if (!csvData) {
+            showMessage('error', '请输入CSV数据！', 'importMessage');
+            return;
+        }
+
+        showLoading(true);
+
+        fetch('/courses/import', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ csvData: csvData })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', data.message, 'importMessage');
+                    document.getElementById('csvData').value = '';
+                    loadAllCourses();
+                } else {
+                    showMessage('error', data.message || '导入失败', 'importMessage');
+                }
+                showLoading(false);
+            })
+            .catch(error => {
+                showMessage('error', '导入失败: ' + error.message, 'importMessage');
+                showLoading(false);
+            });
+    }
+
+    // 搜索课程
+    function searchCourses() {
+        const keyword = document.getElementById('searchKeyword').value.trim();
+        const searchType = document.getElementById('searchType').value;
+
+        if (!keyword) {
+            showMessage('error', '请输入搜索关键词！', 'searchMessage');
+            return;
+        }
+
+        showLoading(true);
+
+        fetch(`/courses/search?keyword=${encodeURIComponent(keyword)}&searchType=${searchType}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.records.length === 0) {
+                    showMessage('error', '无匹配选课记录', 'searchMessage');
+                    renderCoursesTable({});
+                } else {
+                    showMessage('success', data.message, 'searchMessage');
+                    renderCoursesTable({'搜索结果': data.records});
+                }
+                showLoading(false);
+            })
+            .catch(error => {
+                showMessage('error', '搜索失败: ' + error.message, 'searchMessage');
+                showLoading(false);
+            });
+    }
+
+    // 重置搜索
+    function resetSearch() {
+        document.getElementById('searchKeyword').value = '';
+        document.getElementById('searchMessage').style.display = 'none';
+        loadAllCourses();
+    }
+
+    // 初始化示例数据
+    function initSampleData() {
+        if (!confirm('确定要初始化示例数据吗？这将添加10条示例选课记录。')) {
+            return;
+        }
+
+        showLoading(true);
+
+        fetch('/courses/init-sample', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', data.message, 'importMessage');
+                    loadAllCourses();
+                } else {
+                    showMessage('error', data.message || '初始化失败', 'importMessage');
+                }
+                showLoading(false);
+            })
+            .catch(error => {
+                showMessage('error', '初始化失败: ' + error.message, 'importMessage');
+                showLoading(false);
+            });
+    }
+
+    // 清空所有数据
+    function clearAllData() {
+        if (!confirm('⚠️ 警告：确定要清空所有数据吗？此操作不可恢复！')) {
+            return;
+        }
+
+        showLoading(true);
+
+        fetch('/courses/clear', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('success', data.message, 'importMessage');
+                    loadAllCourses();
+                } else {
+                    showMessage('error', data.message || '清空失败', 'importMessage');
+                }
+                showLoading(false);
+            })
+            .catch(error => {
+                showMessage('error', '清空失败: ' + error.message, 'importMessage');
+                showLoading(false);
+            });
+    }
+
+    // 显示/隐藏加载状态
+    function showLoading(show) {
+        document.getElementById('loading').style.display = show ? 'block' : 'none';
+    }
+
+    // 显示消息
+    function showMessage(type, text, containerId) {
+        const messageDiv = document.getElementById(containerId);
+        messageDiv.textContent = text;
+        messageDiv.className = 'message ' + type;
+        messageDiv.style.display = 'block';
+
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, 5000);
+    }
+</script>
+</body>
+</html>
